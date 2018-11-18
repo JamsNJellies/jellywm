@@ -1,10 +1,8 @@
-/* TinyWM is written by Nick Welch <nick@incise.org> in 2005 & 2011.
- *
- * This software is in the public domain
- * and is provided AS IS, with NO WARRANTY. */
+/* jellywm - by JamsNJellies */
 
 #include <X11/Xlib.h>
-
+#include <stdio.h>
+#include <stdlib.h>
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 int main(void)
@@ -16,11 +14,14 @@ int main(void)
 
     if(!(dpy = XOpenDisplay(0x0))) return 1;
 
-    XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F1")), Mod1Mask,
+    XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("r")), Mod4Mask,
             DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
-    XGrabButton(dpy, 1, Mod1Mask, DefaultRootWindow(dpy), True,
+    XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("q")), Mod4Mask,
+            DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+
+    XGrabButton(dpy, 1, Mod4Mask, DefaultRootWindow(dpy), True,
             ButtonPressMask|ButtonReleaseMask|PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None);
-    XGrabButton(dpy, 3, Mod1Mask, DefaultRootWindow(dpy), True,
+    XGrabButton(dpy, 3, Mod4Mask, DefaultRootWindow(dpy), True,
             ButtonPressMask|ButtonReleaseMask|PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None);
 
     start.subwindow = None;
@@ -28,12 +29,24 @@ int main(void)
     {
         XNextEvent(dpy, &ev);
         if(ev.type == KeyPress && ev.xkey.subwindow != None)
-            XRaiseWindow(dpy, ev.xkey.subwindow);
+	{
+		if(ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("r")))
+		{
+			XRaiseWindow(dpy, ev.xkey.subwindow);
+		}
+
+		else if(ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("q")))
+		{
+			XDestroyWindow(dpy, ev.xkey.subwindow);
+		}
+	}
+
         else if(ev.type == ButtonPress && ev.xbutton.subwindow != None)
         {
             XGetWindowAttributes(dpy, ev.xbutton.subwindow, &attr);
             start = ev.xbutton;
         }
+
         else if(ev.type == MotionNotify && start.subwindow != None)
         {
             int xdiff = ev.xbutton.x_root - start.x_root;

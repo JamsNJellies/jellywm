@@ -1,0 +1,5 @@
+exec xrdb $HOME/.Xresources &
+exec ./jellywm &
+exec nitrogen --restore &
+exec urxvt &
+exec urxvt
