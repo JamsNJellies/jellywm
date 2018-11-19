@@ -1,5 +1,4 @@
 /* jellywm - by JamsNJellies */
-
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,10 +36,11 @@ int main(void)
 
 		else if(ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("q")))
 		{
+			XDestroySubwindows(dpy, ev.xkey.subwindow);
 			XDestroyWindow(dpy, ev.xkey.subwindow);
 		}
 	}
-
+	
         else if(ev.type == ButtonPress && ev.xbutton.subwindow != None)
         {
             XGetWindowAttributes(dpy, ev.xbutton.subwindow, &attr);
@@ -58,7 +58,8 @@ int main(void)
                 MAX(1, attr.height + (start.button==3 ? ydiff : 0)));
         }
         else if(ev.type == ButtonRelease)
+	{
             start.subwindow = None;
+	}
     }
 }
-
