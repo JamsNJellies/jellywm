@@ -1,6 +1,4 @@
 exec xrdb $HOME/.Xresources &
 exec ./jellywm &
-exec compton &
 exec nitrogen --restore &
-exec urxvt &
-exec urxvt
+exec compton
